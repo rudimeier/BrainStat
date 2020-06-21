@@ -1,14 +1,16 @@
 # This file contains all the matlab_Surfstat* wrapper functions. Some of
 # them are not yet implemented
 
-import matlab.engine
+#import matlab.engine
 import matlab
+import oct2py
 import numpy as np
 import sys
 
 def matlab_init_surfstat():
     global surfstat_eng
-    surfstat_eng = matlab.engine.start_matlab()
+    #surfstat_eng = matlab.engine.start_matlab()
+    surfstat_eng = oct2py.Oct2Py()
     addpath = surfstat_eng.addpath('matlab')
 
 # ==> SurfStatAvSurf.m <==
@@ -78,7 +80,7 @@ def matlab_SurfStatEdg(surf):
         if np.ndim(surf_mat[key]) == 0:
             surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
         else:
-            surf_mat[key] = matlab.double(surf_mat[key].tolist())
+            surf_mat[key] = surf_mat[key].tolist()
     edg = surfstat_eng.SurfStatEdg(surf_mat)
     return np.array(edg)
 
@@ -150,12 +152,12 @@ def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     # TODO implement ignored arguments
 
     if isinstance(T, np.ndarray):
-        T = matlab.double(T.tolist())
+        T = T.tolist()
     else:
         T = surfstat_eng.double(T)
 
     if isinstance(M, np.ndarray):
-        M = matlab.double(M.tolist())
+        M = M.tolist()
     else:
         M = surfstat_eng.double(M)
 
@@ -202,14 +204,14 @@ def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
     # Y      = normalized data, numpy array of shape (n x v) or (n x v x k)
     # Yav    = mean of input Y along the mask, numpy array of shape (n x 1) or (n x k)   
 
-    Y = matlab.double(Y.tolist())
+    Y = Y.tolist()
 
     if mask is None and subdiv=='s':
         Y, Ya = surfstat_eng.SurfStatNorm(Y, nargout=2)
     
     elif mask is not None and subdiv=='s':
         mymask = np.array(mask, dtype=int)
-        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        mymask = matlab.logical(mymask.tolist())
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, nargout=2)
 
     elif mask is not None and subdiv=='d':
@@ -384,7 +386,7 @@ def matlab_SurfStatT(slm, contrast):
         else:
             slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
-    contrast = matlab.double(contrast.tolist())
+    contrast = contrast.tolist()
     
     slm_MAT = surfstat_eng.SurfStatT(slm_mat, contrast)
     
