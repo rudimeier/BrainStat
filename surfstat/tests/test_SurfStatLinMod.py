@@ -1,9 +1,11 @@
+import numpy as np
+import pytest
 import sys
+
 sys.path.append("python")
 from SurfStatLinMod import *
-import surfstat_wrap as sw
-import numpy as np
 from term import Term
+import surfstat_wrap as sw
 
 sw.matlab_init_surfstat()
 

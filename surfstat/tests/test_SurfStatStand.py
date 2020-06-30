@@ -1,8 +1,10 @@
+import numpy as np
+import pytest
 import sys
+
 sys.path.append("python")
 from SurfStatStand import *
 import surfstat_wrap as sw
-import numpy as np
 
 sw.matlab_init_surfstat()
 
@@ -13,8 +15,7 @@ def dummy_test(Y, mask, subtractordivide):
 		Wrapped_Y, Wrapped_Ym = sw.matlab_SurfStatStand(Y, mask, subtractordivide) 
 
 	except:
-		print >> sys.stderr, "ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS..."
-		sys.exit(1)
+		pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 
 	# python function
 	Python_Y, Python_Ym = py_SurfStatStand(Y, mask, subtractordivide)

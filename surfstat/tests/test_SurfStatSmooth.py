@@ -1,8 +1,10 @@
+import numpy as np
+import pytest
 import sys
+
 sys.path.append("python")
 from SurfStatSmooth import *
 import surfstat_wrap as sw
-import numpy as np
 
 sw.matlab_init_surfstat()
 

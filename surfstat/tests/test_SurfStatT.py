@@ -1,9 +1,10 @@
+import numpy as np
+import pytest
 import sys
+
 sys.path.append("python")
 from SurfStatT import *
 import surfstat_wrap as sw
-import numpy as np
-import sys
 
 sw.matlab_init_surfstat()
 
@@ -14,8 +15,7 @@ def dummy_test(slm, contrast):
 		Wrapped_slm = sw.matlab_SurfStatT(slm, contrast)
 		
 	except:
-		print >> sys.stderr, "ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS..."
-		sys.exit(1)
+		pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 	
 	# run python functions
 
