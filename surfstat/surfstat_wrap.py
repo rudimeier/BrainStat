@@ -38,10 +38,10 @@ def matlab_SurfStatColormap(map):
 # ==> SurfStatCoord2Ind.m <==
 def matlab_SurfStatCoord2Ind(coord, surf):
     if isinstance(coord, np.ndarray):
-        coord = matlab.double(coord.tolist())
+        coord = coord.tolist()
     surf_mat = surf.copy()
     for key in surf_mat.keys():
-        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+        surf_mat[key] = surf_mat[key].tolist()  
     ind = surfstat_eng.SurfStatCoord2Ind(coord, surf_mat)
     return np.array(ind)
 
@@ -99,14 +99,14 @@ def matlab_SurfStatF(slm1, slm2):
         if np.ndim(slm1_mat[key]) == 0:
             slm1_mat[key] = surfstat_eng.double(slm1_mat[key])
         else:
-            slm1_mat[key] = matlab.double(slm1_mat[key].tolist())    
+            slm1_mat[key] = slm1_mat[key].tolist()    
 
     slm2_mat = slm2.copy()
     for key in slm2_mat.keys():
         if np.ndim(slm2_mat[key]) == 0:
             slm2_mat[key] = surfstat_eng.double(slm2_mat[key])
         else:
-            slm2_mat[key] = matlab.double(slm2_mat[key].tolist())    
+            slm2_mat[key] = slm2_mat[key].tolist()    
     
     result_mat = (surfstat_eng.SurfStatF(slm1_mat, slm2_mat))    
 
@@ -124,10 +124,10 @@ def matlab_SurfStatF(slm1, slm2):
 # ==> SurfStatInd2Coord.m <==
 def matlab_SurfStatInd2Coord(ind, surf):
     if isinstance(ind, np.ndarray):
-        ind = matlab.double(ind.tolist())
+        ind = ind.tolist()
     surf_mat = surf.copy()
     for key in surf_mat.keys():
-        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+        surf_mat[key] = surf_mat[key].tolist()  
     coord = surfstat_eng.SurfStatInd2Coord(ind, surf_mat)
     return np.array(coord)
 
@@ -169,7 +169,7 @@ def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
             if np.ndim(surf_mat[key]) == 0:
                 surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
             else:
-                surf_mat[key] = matlab.double(surf_mat[key].tolist())    
+                surf_mat[key] = surf_mat[key].tolist()    
         result_mat = surfstat_eng.SurfStatLinMod(T, M, surf_mat)    
 
     result_mat_dic = {key: None for key in result_mat.keys()}
@@ -216,7 +216,7 @@ def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
 
     elif mask is not None and subdiv=='d':
         mymask = np.array(mask, dtype=int)
-        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        mymask = matlab.logical(mymask.tolist())
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, subdiv, nargout=2)
 
     return np.array(Y), np.array(Ya)
@@ -298,7 +298,7 @@ def matlab_SurfStatSmooth(Y, surf, FWHM):
     #    (nx,ny,nz) = size(volume).
     #FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
 
-    Y_mat = matlab.double(Y.tolist())
+    Y_mat = Y.tolist()
 
     surf_mat = surf.copy()
 
@@ -306,7 +306,7 @@ def matlab_SurfStatSmooth(Y, surf, FWHM):
         if np.ndim(surf_mat[key]) == 0:
             surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
         else:
-            surf_mat[key] = matlab.double(surf_mat[key].tolist())
+            surf_mat[key] = surf_mat[key].tolist()
 
     FWHM_mat = FWHM
 
@@ -332,18 +332,18 @@ def matlab_SurfStatStand(Y, mask=None, subtractordivide='s'):
 	# Y      = standardized data, numpy array of shape (n x v).
 	# Ym     = mean of input Y along the mask, numpy array of shape (n x 1).
 
-    Y = matlab.double(Y.tolist())
+    Y = Y.tolist()
     if mask is None and subtractordivide=='s':
         Y, Ya = surfstat_eng.SurfStatStand(Y, nargout=2)
     
     elif mask is not None and subtractordivide=='s':
         mymask = np.array(mask, dtype=int)
-        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        mymask = matlab.logical(mymask.tolist())
         Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, nargout=2)
 
     elif mask is not None and subtractordivide=='d':
         mymask = np.array(mask, dtype=int)
-        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        mymask = matlab.logical(mymask.tolist())
         Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, subtractordivide, nargout=2)
 
     return np.array(Y), np.array(Ya)
@@ -384,7 +384,7 @@ def matlab_SurfStatT(slm, contrast):
         if np.ndim(slm_mat[key]) == 0:
             slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
         else:
-            slm_mat[key] = matlab.double(slm_mat[key].tolist())
+            slm_mat[key] = slm_mat[key].tolist()
 
     contrast = contrast.tolist()
     
