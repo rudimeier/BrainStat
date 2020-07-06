@@ -361,9 +361,37 @@ def matlab_SurfStatReadVol(filenames,mask,step,dirname,maxmem):
 def matlab_SurfStatReadVol1(file, Z, T):
     sys.exit("Function matlab_SurfStatReadVol1 is not implemented yet")
 
+
+
+
+
 # ==> SurfStatResels.m <==
-def matlab_SurfStatResels(slm, mask):
-    sys.exit("Function matlab_SurfStatResels is not implemented yet")
+def matlab_SurfStatResels(slm, mask=None): 
+    # slm.resl = numpy array of shape (e,k)
+    # slm.tri  = numpy array of shape (t,3)
+    # or
+    # slm.lat  = 3D logical array
+    # mask     = numpy 'bool' array of shape (1,v)
+    
+    slm_mat = slm.copy()
+    for key in slm_mat.keys():
+        if isinstance(slm_mat[key], np.ndarray):
+            slm_mat[key] = matlab.double(slm_mat[key].tolist()) 
+        else:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
+
+    if mask is None:
+        resels, reselspvert, edg = surfstat_eng.SurfStatResels(slm_mat, 
+                                                               nargout=3)
+    else:
+        mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
+        mask_mat = matlab.logical(mask_mat)
+
+        resels, reselspvert, edg = surfstat_eng.SurfStatResels(slm_mat, 
+                                                               mask_mat, 
+                                                               nargout=3)
+
+    return np.array(resels), np.array(reselspvert), np.array(edg)
 
 
 
