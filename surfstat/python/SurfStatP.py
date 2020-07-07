@@ -35,13 +35,34 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     df[0, 0:ndf] = slm['df']
     df[1, 0:2] = slm['df'][ndf-1]
     
-    # NOT YET IMPLEMENTED
     #if 'dfs' in slm.keys():
     #    df[0, ndf-1] = ...
     
-    # NOT YET IMPLEMENTED
-    #if v == 1:
-    #    ....
+    if v == 1:
+        varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
+        pval = {}
+        # NEED TO BE CALLED FROM PYTHON STAT_THRESHOLD
+        pval['P'] = np.array(eng.stat_threshold(var2mat(0),
+                                                var2mat(1),
+                                                var2mat(0),
+                                                var2mat(df),
+                                                var2mat(varA),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat(slm['k']),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat(0),
+                                                nargout=1))
+        pval['P'] = pval['P'][0,1]
+        peak = []
+        clus = []
+        clusid = []
+
+        # only a single p-value is returned, and function is stopped.
+        return pval, peak, clus, clusid
+        sys.exit()
     
     if clusthresh < 1:
         # NEED TO BE CALLED FROM PYTHON STAT_THRESHOLD
@@ -150,4 +171,4 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     pval['mask'] = mask
 
     return pval, peak, clus, clusid
-
+    
