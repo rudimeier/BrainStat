@@ -38,7 +38,7 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
 # data from Sofie
 def test_1():  
 
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -54,7 +54,7 @@ def test_1():
 
 # data from Sofie + a random mask
 def test_2():
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -75,7 +75,7 @@ def test_2():
 # data from Sofie + clusthresh is a random value
 def test_3():  
 
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -96,7 +96,7 @@ def test_4():
     v = int(64984)
     y = int(194940)
 
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -113,7 +113,7 @@ def test_4():
 # data from Sofie, slm['t'] is array of shape (1,1)
 def test_5():
 
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -132,7 +132,7 @@ def test_6():
     
     v = int(64984)
 
-    slmfile = './data/slm.mat'
+    slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
