@@ -10,6 +10,9 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
     try:
         # wrap matlab functions
         M_pval, M_peak, M_clus, M_clusid = sw.matlab_SurfStatP(slm, mask, clusthresh)
+        
+        print('AAAAAAAAAXXXXXXXXX ', M_pval, M_peak, M_clus, M_clusid)
+        
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
@@ -33,7 +36,6 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
 
 
     assert all(flag == True for (flag) in testout_SurfStatP)
-
 
 # data from Sofie
 def test_1():  
@@ -71,5 +73,21 @@ def test_2():
 
     dummy_test(slm)
 
+
+# data from Sofie, slm['t'] is array of shape (1,1)
+def test_3():
+
+    slmfile = './data/slm.mat'
+    slmdata = loadmat(slmfile)
+
+    slm = {}
+
+    slm['t'] = np.array([[-0.1718374541922737]])
+    slm['df'] = slmdata['slm']['df'][0,0]
+    slm['k'] = 1
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+
+    dummy_test(slm)
 
 
