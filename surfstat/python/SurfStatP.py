@@ -25,8 +25,9 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     
     l, v =np.shape(slm['t'])
     
-    if mask == None:
+    if mask is None:
         mask = np.ones((1,v), dtype=bool)
+    
     
     df = np.zeros((2,2))
     
@@ -64,33 +65,53 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     resels, reselspvert, edg = sw.matlab_SurfStatResels(slm, mask)
     N = mask.sum()
     
-    if np.max(slm['t'][0, mask.flatten()]) < 0:
-        print('NOT YET IMPLEMENTED')
+    if np.max(slm['t'][0, mask.flatten()]) < thresh:
+        pval = {}
+        varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
+       
+        # NEED TO BE CALLED FROM PYTHON STAT_THRESHOLD
+        pval['P'] = np.array(eng.stat_threshold(var2mat(resels),
+                                                var2mat(N),
+                                                var2mat(1),
+                                                var2mat(df),
+                                                var2mat(varA),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat(slm['k']),
+                                                var2mat([]),
+                                                var2mat([]),
+                                                var2mat(0),
+                                                nargout=1))
+        pval['P'] = pval['P'][0, 1:v+1]
+        peak = []
+        clus = []
+        clusid = []
+    
     else:
         # NEED TO BE CALLED FROM PYTHON SURFSTATPEAKCLUSTER
         peak, clus, clusid  = sw.matlab_SurfStatPeakClus(slm, mask, thresh,
                                                          reselspvert, edg)
-
         slm['t'] = slm['t'].reshape(1, slm['t'].size)
-        
+
         varA = np.concatenate((np.array([[10]]), peak['t'].T , slm['t']),
                               axis=1)
         varB = np.concatenate((np.array([[10]]), clus['resels']))
-        
+                
         # NEED TO BE CALLED FROM PYTHON STAT_THRESHOLD
         pp, clpval = eng.stat_threshold(var2mat(resels),
-                            var2mat(N),
-                            var2mat(1),
-                            var2mat(df),
-                            var2mat(varA),
-                            var2mat(thresh),
-                            var2mat(varB),
-                            var2mat([]),
-                            var2mat(slm['k']),
-                            var2mat([]),
-                            var2mat([]),
-                            var2mat(0),
-                            nargout=2)
+                                        var2mat(N),
+                                        var2mat(1),
+                                        var2mat(df),
+                                        var2mat(varA),
+                                        var2mat(thresh),
+                                        var2mat(varB),
+                                        var2mat([]),
+                                        var2mat(slm['k']),
+                                        var2mat([]),
+                                        var2mat([]),
+                                        var2mat(0),
+                                        nargout=2)
         pp = np.array(pp)
         clpval = np.array(clpval)
         
@@ -129,25 +150,4 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     pval['mask'] = mask
 
     return pval, peak, clus, clusid
-
-
-slmfile = '/data/p_02323/hippoc/BrainStat/surfstat/slm.mat'
-slmdata = loadmat(slmfile)
-
-slm = {}
-
-slm['t'] = slmdata['slm']['t'][0,0]
-slm['df'] = slmdata['slm']['df'][0,0]
-slm['k'] = slmdata['slm']['k'][0,0]
-slm['resl'] = slmdata['slm']['resl'][0,0]
-slm['tri'] = slmdata['slm']['tri'][0,0]
-
-
-a,b,c,d = py_SurfStatP(slm)
-
-print('XXXXXXXXX')
-print(a)
-print(b)
-print(c)
-print(d)
 
