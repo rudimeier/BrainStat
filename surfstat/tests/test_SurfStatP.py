@@ -11,8 +11,6 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
         # wrap matlab functions
         M_pval, M_peak, M_clus, M_clusid = sw.matlab_SurfStatP(slm, mask, clusthresh)
         
-        print('AAAAAAAAAXXXXXXXXX ', M_pval, M_peak, M_clus, M_clusid)
-        
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
@@ -88,6 +86,26 @@ def test_3():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
 
+    dummy_test(slm)
+
+
+# data from Sofie + add a random slm['dfs'] 
+def test_4():
+    
+    v = int(64984)
+
+    slmfile = './data/slm.mat'
+    slmdata = loadmat(slmfile)
+
+    slm = {}
+
+    slm['t'] = slmdata['slm']['t'][0,0]
+    slm['df'] = slmdata['slm']['df'][0,0]
+    slm['k'] = slmdata['slm']['k'][0,0]
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+    slm['dfs'] = np.random.randint(1,10, (1,v))
+    
     dummy_test(slm)
 
 
