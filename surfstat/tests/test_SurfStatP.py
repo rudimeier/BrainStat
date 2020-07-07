@@ -52,8 +52,46 @@ def test_1():
     dummy_test(slm)
 
 
-# randomize Sofie's data a little bit
+# data from Sofie + a random mask
 def test_2():
+    slmfile = './data/slm.mat'
+    slmdata = loadmat(slmfile)
+
+    slm = {}
+
+    slm['t'] = slmdata['slm']['t'][0,0]
+    slm['df'] = slmdata['slm']['df'][0,0]
+    slm['k'] = slmdata['slm']['k'][0,0]
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+
+    v = np.shape(slmdata['slm']['t'][0,0])[1]
+    Amask = np.random.choice([0, 1], size=(1,v))
+    Amask = np.array(Amask, dtype=bool)
+
+    dummy_test(slm, mask=Amask)
+
+
+# data from Sofie + clusthresh is a random value
+def test_3():  
+
+    slmfile = './data/slm.mat'
+    slmdata = loadmat(slmfile)
+
+    slm = {}
+
+    slm['t'] = slmdata['slm']['t'][0,0]
+    slm['df'] = slmdata['slm']['df'][0,0]
+    slm['k'] = slmdata['slm']['k'][0,0]
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+
+    Aclusthresh = np.random.rand()
+    dummy_test(slm, clusthresh = Aclusthresh)
+
+
+# randomize Sofie's data a little bit
+def test_4():
 
     v = int(64984)
     y = int(194940)
@@ -73,7 +111,7 @@ def test_2():
 
 
 # data from Sofie, slm['t'] is array of shape (1,1)
-def test_3():
+def test_5():
 
     slmfile = './data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -90,7 +128,7 @@ def test_3():
 
 
 # data from Sofie + add a random slm['dfs'] 
-def test_4():
+def test_6():
     
     v = int(64984)
 
@@ -107,5 +145,4 @@ def test_4():
     slm['dfs'] = np.random.randint(1,10, (1,v))
     
     dummy_test(slm)
-
 
