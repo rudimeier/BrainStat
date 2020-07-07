@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatP import *
 import surfstat_wrap as sw
 import numpy as np
+import pytest
 
 def dummy_test(slm, mask=None, clusthresh=0.001):
 
@@ -34,9 +35,10 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
     assert all(flag == True for (flag) in testout_SurfStatP)
 
 
-def test_1():
+# data from Sofie
+def test_1():  
 
-    slmfile = '/data/p_02323/hippoc/BrainStat/surfstat/slm.mat'
+    slmfile = './data/slm.mat'
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -44,6 +46,26 @@ def test_1():
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['df'] = slmdata['slm']['df'][0,0]
     slm['k'] = slmdata['slm']['k'][0,0]
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+
+    dummy_test(slm)
+
+
+# randomize Sofie's data a little bit
+def test_2():
+
+    v = int(64984)
+    y = int(194940)
+
+    slmfile = './data/slm.mat'
+    slmdata = loadmat(slmfile)
+
+    slm = {}
+
+    slm['t'] = np.random.rand(1,v)
+    slm['df'] = np.array([1111]) 
+    slm['k'] = 1
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
 
