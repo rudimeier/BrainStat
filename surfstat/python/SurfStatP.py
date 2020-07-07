@@ -22,7 +22,60 @@ def var2mat(var):
     return matlab.double(var)
 
 def py_SurfStatP(slm, mask=None, clusthresh=0.001):
+    """Corrected P-values for vertices and clusters.
+
+    Parameters
+    ----------
+    slm : a dictionary with keys 't', 'df', 'k', 'resl', 'tri' (or 'lat'). Optional
+        key 'dfs'.
+        slm['t'] : 2D numpy array of shape (l,v).
+            v is number of vertices, slm['t'][0,:] is the test statistic, rest of the
+            rows are used to calculate cluster resels if slm['k']>1. See SurfStatF for
+            the precise definition of extra rows.
+        surf['df'] : 2D numpy array of shape (1,1).
+            degrees of freedom.
+        surf['k'] : float
+            number of variates
+        surf['resl'] : 2D numpy array of shape (e,k).
+            sum over observations of squares of differences of normalized residuals
+            along each edge.
+        surf['tri'] : 2D numpy array of shape (3,t), dtype=int.
+            triangle indices.
+        or,
+        surf['lat'] : 3D numpy array of shape (nx,ny,nz), 1's and 0's.
+            in fact, [nx,ny,nz] = size(volume).
+        surf['dfs'] : 2D numpy array of shape (1,v), dtype=int.
+            optional effective degrees of freedom.
+    mask : 2D numpy array of shape (1,v), dtype=bool.
+        1=inside, 0=outside, v= number of vertices. Default: np.ones((1,v), dtype=bool)
+    clusthresh: float.
+        P-value threshold or statistic threshold for defining clusters. Default: 0.001.
     
+
+    Returns
+    -------
+    pval : a dictionary with keys 'P', 'C', 'mask'.
+        pval['P'] : 2D numpy array of shape (1,v).
+            corrected P-values for vertices.
+        pval['C'] : 2D numpy array of shape (1,v).
+            corrected P-values for clusters.
+        pval['mask'] : copy of input mask.
+    peak : a dictionary with keys 't', 'vertid', 'clusid', 'P'.
+        peak['t'] : 2D numpy array of shape (np,1). peaks (local maxima).
+        peak['vertid'] : 2D numpy array of shape (np,1). vertex.
+        peak['clusid'] : 2D numpy array of shape (np,1). cluster id numbers.
+        peak['P'] : 2D numpy array of shape (np,1). corrected P-values for the peak.
+    clus : a dictionary with keys 'clusid', 'nverts', 'resels', 'P.'
+        clus['clusid'] : 2D numpy array of shape (nc,1). cluster id numbers
+        clus['nverts'] : 2D numpy array of shape (nc,1). number of vertices in cluster.
+        clus['resels'] : 2D numpy array of shape (nc,1). resels in the cluster.
+        clus['P'] : 2D numpy array of shape (nc,1). corrected P-values for the cluster.
+    clusid : 2D numpy array of shape (1,v). cluster id's for each vertex.
+
+    Reference: Worsley, K.J., Andermann, M., Koulis, T., MacDonald, D.
+    & Evans, A.C. (1999). Detecting changes in nonisotropic images.
+    Human Brain Mapping, 8:98-101.
+    """
     l, v =np.shape(slm['t'])
 
     if mask is None:
