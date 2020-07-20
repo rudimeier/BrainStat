@@ -33,12 +33,11 @@ def py_SurfStatQ(slm, mask=None):
     df[1, 0:2] = slm['df'][ndf-1]
     
     if 'dfs' in slm:
-        print("NOT YET IMPLEMENTED")
-        sys.exist()
+        df[0, ndf-1] = slm['dfs'][mask>0].mean()
 
     if 'du' in slm:
-        print("NOT YET IMPLEMENTED")
-        sys.exist()
+        # NEED TO BE CALLED FROM PYTHON SURFSTATRESELS
+        resels, reselspvert, edg = sw.matlab_SurfStatResels(slm, mask)
     else:
         reselspvert = np.ones((1,v))
     reselspvert[0, mask.flatten().astype(bool)]
@@ -82,12 +81,3 @@ def py_SurfStatQ(slm, mask=None):
     qval['mask'] = mask
     
     return qval
-
-slmfile = './tests/data/slm.mat'
-slmdata = loadmat(slmfile)
-slm = {}
-slm['t'] = slmdata['slm']['t'][0,0]
-slm['df'] = slmdata['slm']['df'][0,0]
-slm['k'] = slmdata['slm']['k'][0,0]
-
-py_SurfStatQ(slm)
