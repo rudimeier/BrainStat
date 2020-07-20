@@ -45,6 +45,7 @@ def test_2():
     # randomize slm['t'] and slm['df'], slm['k']=1 
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
+    
     slm = {}
     slm['t'] = np.random.rand(1, k) 
     slm['df'] =  np.array([[m]])
@@ -64,7 +65,7 @@ def test_3():
     dummy_test(slm)
 
 def test_4():
-    # randomize slm['t'] and slm['df'], slm['k'], and a random mask
+    # randomize slm['t'] and slm['df'], slm['k'], and a random mask (type bool)
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     n = random.randint(50, 100)
@@ -74,6 +75,84 @@ def test_4():
     slm['df'] =  np.array([[m]])
     slm['k'] = n
     mask = np.random.choice([0, 1], size=(1,k))
+    mask = mask.astype(bool)
     dummy_test(slm, mask)
+   
+def test_5():
+    # randomize slm['t'] and slm['df'], slm['dfs'], slm['k']=1 
+    k = random.randint(1000, 10000)
+    m = random.randint(1000, 10000)
+    
+    slm = {}
+    slm['t'] = np.random.rand(1, k) 
+    slm['df'] =  np.array([[m]])
+    slm['k'] = 1
+    slm['dfs'] = np.random.choice([1,k-1], size=(1,k))
+    dummy_test(slm)
+    
+def test_6():
+    # randomize slm['t'] and slm['df'], slm['k'], slm['dfs'] and a random mask (type bool)
+    k = random.randint(1000, 10000)
+    m = random.randint(1000, 10000)
+    n = random.randint(50, 100)
+
+    slm = {}
+    slm['t'] = np.random.rand(1, k) 
+    slm['df'] =  np.array([[m]])
+    slm['k'] = n
+    mask = np.random.choice([0, 1], size=(1,k))
+    mask = mask.astype(bool)
+    slm['dfs'] = np.random.choice([1,k-1], size=(1,k))
+    dummy_test(slm, mask)
+    
+def test_7():
+    # randomize slm['t'], slm['df'], slm['k'], slm['tri'], slm['dfs'], mask 
+    k = random.randint(1000, 10000)
+    m = random.randint(1000, 10000)
+    n = random.randint(50, 100)
+    
+    slm = {}
+    slm['t'] = np.random.rand(1, k) 
+    slm['df'] =  np.array([[m]])
+    slm['k'] = n
+    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['dfs'] = np.random.choice([1,k-1], size=(1,k))
+    mask = np.random.choice([0, 1], size=(1,k))
+    mask = mask.astype(bool)
+    dummy_test(slm, mask)
+    
+def test_8():
+    # random slm['t'], slm['df'], slm['k'], slm['tri'], slm['resl'], slm['dfs']
+    k = random.randint(1000, 10000)
+    m = random.randint(1000, 10000)
+    n = random.randint(1,10)
+
+    slm = {}
+    slm['t'] = np.random.rand(1,k) 
+    slm['df'] =  np.array([[m]])
+    slm['k'] = 5
+    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['resl'] = np.random.rand(k,1)
+    slm['dfs'] = np.random.randint(1,10, (1,k))
+    dummy_test(slm)    
+    
+def test_9():
+    # random slm['t'], slm['df'], slm['tri'], slm['resl'],
+    # special input case: slm['dfs'] and slm['du']
+    k = random.randint(1000, 10000)
+    m = random.randint(1000, 10000)
+    n = random.randint(1,10)
+
+    slm = {}
+    slm['t'] = np.random.rand(1,k) 
+    slm['df'] =  np.array([[m]])
+    slm['k'] = 1 
+    slm['du'] = n
+    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['resl'] = np.random.rand(k*2,1)
+    slm['dfs'] = np.ones((1, k))
+    dummy_test(slm) 
+
+
 
 
