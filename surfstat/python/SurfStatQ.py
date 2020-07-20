@@ -21,7 +21,38 @@ def var2mat(var):
     return matlab.double(var)
 
 def py_SurfStatQ(slm, mask=None):
-    
+    """Q-values for False Discovey Rate of resels.
+
+    Parameters
+    ----------
+    slm : a dictionary with mandatory keys 't', 'df', and 'k'.
+        slm['t'] : numpy array of shape (1,v),
+            v is the number of vertices.
+        slm['df'] : numpy array of shape (1,1),
+            degrees of freedom.
+        slm['k'] : int,
+            number of variates.    
+    Optional parameters:
+        mask : numpy array of shape (1,v), dtype 'bool',
+            by default ones(1,v).        
+        slm['dfs'] : numpy array of shape (1,v),
+            effective degrees of freedom.
+        slm['resl'] : numpy array of shape (e,v),
+            matrix of sum over observations of squares of
+            differences of normalized residuals along each edge.
+        slm['tri'] : numpy array of shape (t,3),
+            triangle indices, 1-based, t is the number of triangles,    
+        or,
+        slm['lat'] : 3D numpy array of 1's and 0's (1:in, 0:out).            
+            
+    Returns
+    -------
+    qval : a dictionary with keys 'Q' and 'mask'
+        qval['Q'] : numpy array of shape (1,v),
+            vector of Q-values.
+        qval['mask'] : copy of mask.
+
+    """    
     l, v = np.shape(slm['t'])
     
     if mask is None:
