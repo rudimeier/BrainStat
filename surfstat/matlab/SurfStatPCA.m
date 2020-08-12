@@ -1,4 +1,4 @@
-function [ pcntvar, U, V ] = SurfStatPCA( Y, mask, X, k );
+function [ pcntvar, U, V ] = SurfStatPCA( Y, mask, X, c );
 
 %Principal Components Analysis (PCA).
 %
