@@ -2,13 +2,20 @@ import sys
 import numpy as np
 import numpy.matlib
 from term import Term
+import matlab.engine
+import matlab
 
-def py_SurfStatPCA(Y, mask=None, X=1, k=None):
+global eng
+eng = matlab.engine.start_matlab()
+addpath = eng.addpath('matlab')
+
+
+def py_SurfStatPCA(Y, mask=None, X=0, c=4):
     """Principal Components Analysis (PCA).
     Parameters
     ----------
     Y    = 2D numpy array of shape (n,v) , or 3D numpy array of shape (n,v,k),
-        v is number of vertices.
+        v is the number of vertices.
     mask = 2D numpy array of shape (1,v).
         mask array, 1=inside, 0=outside, by default np.ones((1,v)).
     X    = model formula of type term, or scalar, or n x p design matrix of
@@ -27,10 +34,7 @@ def py_SurfStatPCA(Y, mask=None, X=1, k=None):
     V       = 2D numpy array of shape (c,v) or 3D numpy array of shape (c,v,k),
         array of components for the columns (vertices).
     """
-    
-    if k is None: ########## !!!!! what is relation btw. k--c
-        c = 4
-    
+
     if Y.ndim == 2:
         n, v = Y.shape
         k = 1
@@ -57,7 +61,6 @@ def py_SurfStatPCA(Y, mask=None, X=1, k=None):
         v2 = min(v1 + chunk - 1, v)
         vc = v2 - v1 + 1
         maskc = mask[v1 - 1 : v2]
-        
         if k==1:
             Y = Y[: , (maskc-1).astype(int).tolist()[0]] ##### !!!
         else:
@@ -66,17 +69,23 @@ def py_SurfStatPCA(Y, mask=None, X=1, k=None):
         
         if np.any(X[:] != 0):
             Y = Y - X @ (np.linalg.pinv(X) @ Y)
- 
-        S = np.sum(Y**2, axis=0)
+
+        Y = Y.astype(float)
+        S = np.sum(Y**2, axis=0).astype(float)
         Smhalf = (S>0) / np.sqrt(S + (S<=0))
         
         for i in np.arange(1, n+1, 1):
             Y[i-1,:] = Y[i-1,:] * Smhalf
-        
-        A = A + Y @ Y.T
 
-    D, U = np.linalg.eig(A)  #### matlab part differs!!!
-    D = np.diag(D)
+        A = A + Y @ Y.T
+    
+    #D, U = np.linalg.eig(A)  #### matlab part differs!!!
+    #D = np.diag(D)
+    
+    ### matlab part still differs
+    U, D = eng.eig(matlab.double(A.T.tolist()), nargout=2)
+    D = np.array(D)
+    U = np.array(U)
     
     ds = np.sort(np.diag(-D))
     iss = np.argsort(np.diag(-D))
@@ -97,7 +106,5 @@ def py_SurfStatPCA(Y, mask=None, X=1, k=None):
         print('NOT YET IMPLEMENTED')
         sys.exit()
 
-    return pcntvar, V, U
-
-Y = np.array([[1], [1], [1], [2] ])
-print(py_SurfStatPCA(Y))
+    return pcntvar, U, V
+    
