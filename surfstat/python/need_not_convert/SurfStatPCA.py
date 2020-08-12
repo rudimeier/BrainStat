@@ -61,12 +61,13 @@ def py_SurfStatPCA(Y, mask=None, X=0, c=4):
         v2 = min(v1 + chunk - 1, v)
         vc = v2 - v1 + 1
         maskc = mask[v1 - 1 : v2]
-        if k==1:
-            Y = Y[: , (maskc-1).astype(int).tolist()[0]] ##### !!!
-        else:
-            print("NOT YET IMPLEMENTED")
-            sys.exit()
         
+        if k == 1:
+            Y = Y[:, (maskc-1).astype(int).tolist()[0]]
+        else:
+            Y = np.reshape(Y[:, (maskc-1).astype(int).tolist()[0], :],
+                             (n, int(maskc.sum()*k)))
+
         if np.any(X[:] != 0):
             Y = Y - X @ (np.linalg.pinv(X) @ Y)
 
@@ -103,8 +104,6 @@ def py_SurfStatPCA(Y, mask=None, X=0, c=4):
     U = U @ np.diag(s * np.sqrt(df) )
     
     if k > 1:
-        print('NOT YET IMPLEMENTED')
-        sys.exit()
+        V = V.reshape(c,v,k)
 
     return pcntvar, U, V
-    
