@@ -6,6 +6,8 @@ import matlab
 import numpy as np
 import math
 import sys
+sys.path.append("python")
+from term import Term
 from scipy.io import loadmat
 
 def matlab_init_surfstat():
@@ -195,9 +197,34 @@ def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 def matlab_SurfStatListDir(d, exclude):
     sys.exit("Function matlab_SurfStatListDir is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatMaskCut.m <==
 def matlab_SurfStatMaskCut(surf):
-    sys.exit("Function matlab_SurfStatMaskCut is not implemented yet")
+    # Mask that excludes the inter-hemisphere cut.
+    #
+    # Usage: mask = SurfStatMaskCut( surf );
+    #
+    # surf.coord   = 3 x v matrix of surface coordinates, v=#vertices.
+    #
+    # mask         = 1 x v vector, 1=inside, 0=outside, v=#vertices.
+    #
+    # It looks in -50<y<50 and -20<z<40, and mask vertices where |x|>thresh,
+    #  where thresh = 1.5 x arg max of a histogram of |x|. 
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        if np.ndim(surf_mat[key]) == 0:
+            surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+        else:
+            surf_mat[key] = matlab.double(surf_mat[key].tolist())    
+    result_mat = surfstat_eng.SurfStatMaskCut(surf_mat)    
+    result_mat = np.array(result_mat).astype(int)
+    return result_mat
+    
 
 
 
@@ -273,8 +300,51 @@ def matlab_SurfStatP(slm, mask=None, clusthresh=0.001):
 
 
 # ==> SurfStatPCA.m <==
-def matlab_SurfStatPCA(Y, mask, X, k):
-    sys.exit("Function matlab_SurfStatPCA is not implemented yet")
+def matlab_SurfStatPCA(Y, mask=None, X=1, c=4):
+    # Usage: [ pcntvar, U, V ] = SurfStatPCA( Y [,mask [,X [,k] ] ] );
+    #
+    # Y    = n x v matrix or n x v x k array of data, v=#vertices,
+    #        or memory map of same. 
+    # mask = 1 x v vector, 1=inside, 0=outside, default is ones(1,v),  
+    #        i.e. the whole surface.
+    # X    = model formula of type term, or scalar, or n x p design matrix of 
+    #        p covariates for the linear model. The PCA is done on the v x v 
+    #        correlations of the residuals and the components are standardized 
+    #        to have unit standard deviation about zero. If X=0, nothing is       
+    #        removed. If X=1, the mean (over rows) is removed (default).
+    # c    = number of components in PCA, default 4.
+    #
+    # pcntvar = 1 x c vector of percent variance explained by the components.
+    # U       = n x c matrix of components for the rows (observations).
+    # V       = c x v x k array of components for the columns (vertices).
+   
+    Y = matlab.double(Y.tolist())
+    
+    if mask is not None and X is not None and c is not None:
+        
+        mask = matlab.double(mask.tolist())
+        
+        if np.isscalar(X):
+            X = surfstat_eng.double(X)
+        elif isinstance(X, np.ndarray):
+            X = matlab.double(X.tolist())
+        if isinstance(X, Term):
+            X = X.matrix.values.T
+            X = X.astype(float)
+            #print(type(X))
+            X = matlab.double(X.tolist())
+        
+        c = surfstat_eng.double(c)
+        
+       
+        pcntvar, U, V = surfstat_eng.SurfStatPCA(Y, mask, X, c, nargout=3)
+    
+    
+    pcntvar = np.array(pcntvar)
+    U = np.array(U)
+    V = np.array(V)
+    return pcntvar, U, V
+
 
 
 
@@ -366,10 +436,14 @@ def matlab_SurfStatQ(slm, mask=None):
     slm_mat = slm.copy()
     
     for key in slm_mat.keys():
-        if np.ndim(slm_mat[key]) == 0:
-            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
+        
+        if isinstance(slm_mat[key], np.ndarray):
+            if np.ndim(slm_mat[key]) == 0:
+                slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
+            else:
+                slm_mat[key] = matlab.double(slm_mat[key].tolist())
         else:
-            slm_mat[key] = matlab.double(slm_mat[key].tolist())
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
     
     if mask is None:
         q_val_mat = surfstat_eng.SurfStatQ(slm_mat)
@@ -381,7 +455,7 @@ def matlab_SurfStatQ(slm, mask=None):
     q_val_py = {}   
     for key in q_val_mat.keys():
         q_val_py[key] = np.array(q_val_mat[key])
-
+    
     return q_val_py
 
 
