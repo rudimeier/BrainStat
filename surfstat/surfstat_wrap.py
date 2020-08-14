@@ -7,6 +7,7 @@ import numpy as np
 import math
 import sys
 sys.path.append("python")
+sys.path.append("matlab")
 from term import Term
 from scipy.io import loadmat
 
@@ -141,8 +142,22 @@ def matlab_SurfStatInd2Coord(ind, surf):
 
 
 # ==> SurfStatInflate.m <==
-def matlab_SurfStatInflate(surf, w, spherefile):
-    sys.exit("Function matlab_SurfStatInflate is not implemented yet")
+def matlab_SurfStatInflate(surf, w=0.5, spherefile='sphere.obj'):
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+    
+    w_mat = surfstat_eng.double(w)
+    spherefile_mat = surfstat_eng.string(spherefile)
+    
+    surfw_mat = surfstat_eng.SurfStatInflate(surf_mat, w_mat, spherefile_mat)
+    
+    surfw = {key: None for key in surfw_mat.keys()}
+    for key in surfw_mat:
+        surfw[key] = np.array(surfw_mat[key])
+
+    return surfw
+
 
 
 # ==> SurfStatLinMod.m <==
