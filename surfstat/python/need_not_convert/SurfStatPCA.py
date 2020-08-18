@@ -10,31 +10,34 @@ eng = matlab.engine.start_matlab()
 addpath = eng.addpath('matlab')
 
 
-def py_SurfStatPCA(Y, mask=None, X=0, c=4):
+def py_SurfStatPCA(Y, mask=None, X=1, c=4):
     """Principal Components Analysis (PCA).
+
     Parameters
     ----------
-    Y    = 2D numpy array of shape (n,v) , or 3D numpy array of shape (n,v,k),
+    Y : 2D numpy array of shape (n,v) , or 3D numpy array of shape (n,v,k),
         v is the number of vertices.
-    mask = 2D numpy array of shape (1,v).
+    mask : 2D numpy array of shape (1,v), ones and zeros,
         mask array, 1=inside, 0=outside, by default np.ones((1,v)).
-    X    = model formula of type term, or scalar, or n x p design matrix of
-           p covariates for the linear model. The PCA is done on the v x v
-           correlations of the residuals and the components are standardized
-           to have unit standard deviation about zero. If X=0, nothing is
-           removed. If X=1, the mean (over rows) is removed (default).
-    c    = number of components in PCA, default 4.
+    X : a scalar, or 2D numpy array of shape (n,p), or type term,
+        if array, X is a design matrix of p covariates for the linear model,
+        if term, X is model formula. The PCA is done on the v x v correlations
+        of the residuals and the components are standardized to have unit
+        standard deviation about zero. If X=0, nothing is removed. If X=1,
+        the mean (over rows) is removed (default).
+    c : int (<= n), by default 4,
+        number of components in PCA
 
     Returns
     -------
-    pcntvar = 2D numpy array of shape (1,c),
+    pcntvar : 2D numpy array of shape (1,c),
         array of percent variance explained by the components.
-    U       = 2D numpy array of shape (n,c),
+    U : 2D numpy array of shape (n,c),
         array of components for the rows (observations).
-    V       = 2D numpy array of shape (c,v) or 3D numpy array of shape (c,v,k),
+    V : 2D numpy array of shape (c,v) or 3D numpy array of shape (c,v,k),
         array of components for the columns (vertices).
-    """
-
+    """    
+    
     if Y.ndim == 2:
         n, v = Y.shape
         k = 1
@@ -43,14 +46,17 @@ def py_SurfStatPCA(Y, mask=None, X=0, c=4):
 
     if mask is None:
         mask = np.ones((1,v))
-
-    if isinstance(X, Term):
-        print("NOT YET IMPLEMENTED")
-        sys.exit()
-        
-    if np.size(X) == 1:
+    
+    if np.isscalar(X):
         X = np.matlib.repmat(X,n,1)
-
+    elif isinstance(X, np.ndarray):
+        if np.shape(X)[0] == 1:
+            X = np.matlib.repmat(X,n,1)
+    elif isinstance(X, Term):
+        X = X.matrix.values.T
+        if np.shape(X)[0] == 1:
+            X = np.matlib.repmat(X,n,1)
+            
     df = n - np.linalg.matrix_rank(X)
     nc = 1
     chunk = v
@@ -80,13 +86,18 @@ def py_SurfStatPCA(Y, mask=None, X=0, c=4):
 
         A = A + Y @ Y.T
     
+    print('AAAAAAAA ')
+    print(A)
     #D, U = np.linalg.eig(A)  #### matlab part differs!!!
     #D = np.diag(D)
     
-    ### matlab part still differs
+    # matlab part still differs
     U, D = eng.eig(matlab.double(A.T.tolist()), nargout=2)
     D = np.array(D)
     U = np.array(U)
+    
+    print(U)
+    
     
     ds = np.sort(np.diag(-D))
     iss = np.argsort(np.diag(-D))
@@ -107,3 +118,12 @@ def py_SurfStatPCA(Y, mask=None, X=0, c=4):
         V = V.reshape(c,v,k)
 
     return pcntvar, U, V
+
+Y = np.array([[0.8576325,  0.03890732],
+ [0.50201086, 0.60424192],
+ [0.77898583, 0.70162395]])
+mask = np.ones((1,2))  
+X = 35
+c = 3
+
+py_SurfStatPCA(Y, mask, X, c)

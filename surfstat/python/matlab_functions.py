@@ -2,7 +2,8 @@ from scipy.interpolate import interp1d
 from itertools import product
 import numpy as np 
 
-def interp1(x,y,ix,kind='linear'):
+def interp1d_mp(x,y,ix,kind='linear'):
+    # Let's call it interp1_mp like matlab-python
     # Shorthand for the MATLAB interp1 function.  
     f = interp1d(x, y, kind)
     return f(ix)
