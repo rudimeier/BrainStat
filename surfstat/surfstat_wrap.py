@@ -151,7 +151,10 @@ def matlab_SurfStatInflate(surf, w=0.5, spherefile=None):
     
     if spherefile == None:
         surfw_mat = surfstat_eng.SurfStatInflate(surf_mat, w_mat)
-    
+    else:
+        spherefile_mat = surfstat_eng.string(spherefile)
+        surfw_mat = surfstat_eng.SurfStatInflate(surf_mat, w_mat, 
+                                                 spherefile_mat)
     surfw = {key: None for key in surfw_mat.keys()}
     for key in surfw_mat:
         surfw[key] = np.array(surfw_mat[key])

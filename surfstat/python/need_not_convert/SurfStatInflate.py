@@ -13,20 +13,18 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
 
     Parameters
     ----------
-    surf : a dictionary with key 'coord',
-        surf['coord'] : 2D numpy array of shape (3,v),
-            matrix of coordinates, v is the number of vertices.
+    surf : a dictionary with key 'coord'
+        surf['coord'] : 2D numpy array of shape (3,v)
+            Matrix of coordinates, v is the number of vertices.
     w : a float, by default 0.5,
-        weight in [0,1] given to hemi-ellipsoids.
-    spherefile : string (a filename),
-        if spherefile not given and v <= 81924, by default 'sphere.obj',
-        if spherefile not given and v > 81924, by default 'lh.sphere'.
-        Filename of a sphere surface for the left hemisphere. If spherefile
-        is an *.obj file, it assumes that the triangulation of the right
-        hemisphere is a mirror image; if it is an FS file, then it assumes
-        it is identical. The default is 'sphere.obj' for a 40962 vertex
-        (v=81924 for both hemispheres) icosahedral mesh, or 'lh.sphere' for
-        a 163842 vertex (v=327684 for both hemispheres) icosahedral mesh.
+        Weight in [0,1] given to hemi-ellipsoids.
+    spherefile : string (a filename)
+        Filename of a sphere surface for the left or right hemisphere. If 
+        spherefile is None, and v=40962 (or v=81924), by default 'sphere.obj'. 
+        If spherefile is None, and v=163842 (or v=327684), by default 
+        'lh.sphere'. If spherefile is an *.obj file, it assumes that the 
+        triangulation of the right hemisphere is a mirror image; if it is an 
+        FS file, then it assumes it is identical. 
 
     Returns
     -------

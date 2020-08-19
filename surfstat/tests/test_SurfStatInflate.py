@@ -1,7 +1,5 @@
 import sys
-sys.path.append("/data/p_02323/BrainStat/surfstat")
-sys.path.append("/data/p_02323/BrainStat/surfstat/python")
-sys.path.append("/data/p_02323/BrainStat/surfstat/matlab")
+sys.path.append("python")
 from SurfStatInflate import *
 import surfstat_wrap as sw
 import numpy as np
@@ -27,24 +25,28 @@ def dummy_test(surf, w=0.5, spherefile=None):
                                        M_surfw[key], \
                                        rtol=1e-05, equal_nan=True))
 
-    #print(testout_SurfStatInflate)
+    print(testout_SurfStatInflate)
     
-    return all(flag == True for (flag) in testout_SurfStatInflate)
+    #return all(flag == True for (flag) in testout_SurfStatInflate)
 
+    return
 
 sw.matlab_init_surfstat()
+
 
 def test_1():
     v = 40962
     surf = {}
     surf['coord'] = np.random.rand(3,v)
-    dummy_test(surf)
+    w = np.random.rand() 
+    dummy_test(surf, w)
 
 def test_2():
     v = 40962
     surf = {}
     surf['coord'] = np.random.uniform(low=-3, high=3, size=(3,v))
-    dummy_test(surf)
+    w = np.random.rand() 
+    dummy_test(surf, w)
     
 def test_3():
     v = 40962
@@ -56,13 +58,15 @@ def test_4():
     v = 40962
     surf = {}
     surf['coord'] = np.random.randint(low=-1000, high=1000, size=(3,v))
-    dummy_test(surf)
+    w = np.random.rand() 
+    dummy_test(surf, w)
     
 def test_5():
     v = 40962
     surf = {}
     surf['coord'] = np.random.randint(low=-(v-1), high=(v+1), size=(3,v))
-    dummy_test(surf)
+    w = np.random.rand() 
+    dummy_test(surf, w)
     
 def test_6():
     v = 81924
@@ -219,3 +223,35 @@ def test_30():
     surf = {}
     surf['coord'] = np.random.randint(low=-(v-1), high=(v+1), size=(3,v))
     dummy_test(surf)
+
+def test_31():
+    v = 32492
+    surf = {}
+    surf['coord'] = np.random.rand(3,v)
+    w = np.random.rand() 
+    spherefile = './tests/data/loadconte69_sphereleft.obj'
+    dummy_test(surf, w, spherefile)
+    
+def test_32():
+    v = 32492
+    surf = {}
+    surf['coord'] = np.random.rand(3,v)
+    w = np.random.rand() 
+    spherefile = './tests/data/loadconte69_sphereright.obj'
+    dummy_test(surf, w, spherefile)
+    
+def test_33():
+    v = 32492
+    surf = {}
+    surf['coord'] = np.random.rand(3,v)
+    w = np.random.rand() 
+    spherefile = './tests/data/FS_loadconte69_left.sphere'
+    dummy_test(surf, w, spherefile)
+    
+def test_34():
+    v = 32492
+    surf = {}
+    surf['coord'] = np.random.rand(3,v)
+    w = np.random.rand() 
+    spherefile = './tests/data/FS_loadconte69_right.sphere'
+    dummy_test(surf, w, spherefile)
